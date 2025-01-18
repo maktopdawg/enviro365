@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS Category (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR( 100 ) NOT NULL,
+    description VARCHAR( 255 ) NOT NULL,
+    lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS Waste (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR( 100 ) NOT NULL,
+    description VARCHAR( 255 ) NOT NULL,
+    categoryId INT NOT NULL,
+    lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ( categoryId ) REFERENCES category( id )
+);
+
+CREATE TABLE IF NOT EXISTS Disposal (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    wasteId INT NOT NULL,
+    method VARCHAR( 100 ) NOT NULL,
+    instructions VARCHAR( 255 ) NOT NULL,
+    location VARCHAR( 100 ),
+    lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ( wasteId ) REFERENCES waste( id )
+);
