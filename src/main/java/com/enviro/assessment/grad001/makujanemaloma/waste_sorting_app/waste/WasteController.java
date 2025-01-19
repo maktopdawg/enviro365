@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +24,18 @@ public class WasteController {
     }
 
     @GetMapping( "" )
-    List<Waste> getAllWaste() {
+    List<WasteDTO> getAllWaste() {
         return wasteRepository.getAllWaste();
     }
 
+    @GetMapping( "/with-disposals" )
+    List<WasteWithDisposalsDTO> getAllWasteWithDisposal() {
+        return wasteRepository.getAllWasteWithDisposal();
+    }
+
     @GetMapping( "/{id}" )
-    Waste getWaste( @PathVariable Integer id ) {
-        Optional<Waste> waste = wasteRepository.getWaste( id );
+    WasteDTO getWaste(@PathVariable Integer id ) {
+        Optional<WasteDTO> waste = wasteRepository.getWaste( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
         }
@@ -40,14 +44,14 @@ public class WasteController {
 
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    void createNewWaste( @Valid @RequestBody Waste waste ) {
-        wasteRepository.insertNewWaste( waste );
+    void createNewWaste( @Valid @RequestBody WasteDTO wasteDTO) {
+        wasteRepository.insertNewWaste(wasteDTO);
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    void updateWaste( @PathVariable Integer id, @Valid @RequestBody Waste waste ) {
-        wasteRepository.updateWaste( waste, id );
+    void updateWaste( @PathVariable Integer id, @Valid @RequestBody WasteDTO wasteDTO) {
+        wasteRepository.updateWaste(wasteDTO, id );
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )

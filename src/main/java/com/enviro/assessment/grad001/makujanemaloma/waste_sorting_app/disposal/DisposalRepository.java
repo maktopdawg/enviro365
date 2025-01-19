@@ -8,33 +8,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class DisposalRepository extends BaseRepository<Disposal> {
+public class DisposalRepository extends BaseRepository<DisposalDTO> {
     private final String tableName = "Disposal";
 
     public DisposalRepository(JdbcClient jdbcClient )   {
-        super( jdbcClient, Disposal.class );
+        super( jdbcClient, DisposalDTO.class );
     }
 
-    public List<Disposal> getAllDisposals() {
+    public List<DisposalDTO> getAllDisposals() {
         return getAll( tableName );
     }
 
-    public Optional<Disposal> getDisposal(Integer id ) {
+    public Optional<DisposalDTO> getDisposal(Integer id ) {
         return getById( tableName, id );
     }
 
-    public void insertNewDisposal( Disposal disposal ) {
+    public void insertNewDisposal( DisposalDTO disposalDTO) {
         create(
                 tableName,
-                List.of( disposal.wasteId(), disposal.method(), disposal.instructions(), disposal.location()  ),
+                List.of( disposalDTO.wasteId(), disposalDTO.method(), disposalDTO.instructions(), disposalDTO.location()  ),
                 "INSERT INTO " + tableName + " ( wasteId, method, instructions, location, lastUpdated ) VALUES ( ?, ?, ?, ?, CURRENT_TIMESTAMP )"
         );
     }
 
-    public void updateDisposal( Disposal disposal, Integer id ) {
+    public void updateDisposal(DisposalDTO disposalDTO, Integer id ) {
         update(
                 tableName,
-                List.of( disposal.wasteId(), disposal.method(), disposal.instructions(), disposal.location(), id ),
+                List.of( disposalDTO.wasteId(), disposalDTO.method(), disposalDTO.instructions(), disposalDTO.location(), id ),
                 "UPDATE " + tableName + " SET wasteId = ?, method = ?, instructions = ?, location = ?, lastUpdated = CURRENT_TIMESTAMP where id = ?"
         );
     }

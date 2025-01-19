@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.enviro.assessment.grad001.makujanemaloma</groupId>
-	<artifactId>waste-sorting-app</artifactId>
+	<artifactId>wasteDTO-sorting-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>waste-sorting-app</name>
+	<name>wasteDTO-sorting-app</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

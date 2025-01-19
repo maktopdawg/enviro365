@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +21,14 @@ public class CategoryController {
     }
 
     @GetMapping("")
-    List<Category> getAllCategories() {
+    List<CategoryDTO> getAllCategories() {
         return categoryRepository.getAllCategories();
     }
 
     @GetMapping( "/{id}" )
-    Category getCategoryById (@PathVariable Integer id) {
+    CategoryDTO getCategoryById (@PathVariable Integer id) {
 
-        Optional<Category>  category = categoryRepository.getCategoryById( id );
+        Optional<CategoryDTO>  category = categoryRepository.getCategoryById( id );
         if ( category.isEmpty() ) {
             throw new CategoryNotFoundException( "Category with id " + id + " not found" );
         }
@@ -40,15 +39,15 @@ public class CategoryController {
     // POST
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    void createNewCategory ( @Valid  @RequestBody Category category ) {
-        categoryRepository.createNewCategory( category );
+    void createNewCategory ( @Valid  @RequestBody CategoryDTO categoryDTO) {
+        categoryRepository.createNewCategory(categoryDTO);
     }
 
     // PUT
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    void updateCategory ( @Valid @RequestBody Category category, @PathVariable Integer id ) {
-        categoryRepository.updateCategory( category, id );
+    void updateCategory (@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Integer id ) {
+        categoryRepository.updateCategory(categoryDTO, id );
     }
 
     // DELETE

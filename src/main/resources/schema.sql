@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Waste (
     description VARCHAR( 255 ) NOT NULL,
     categoryId INT NOT NULL,
     lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ( categoryId ) REFERENCES category( id )
+    FOREIGN KEY ( categoryId ) REFERENCES category( id ) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Disposal (
@@ -22,5 +22,5 @@ CREATE TABLE IF NOT EXISTS Disposal (
     instructions VARCHAR( 255 ) NOT NULL,
     location VARCHAR( 100 ),
     lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ( wasteId ) REFERENCES waste( id )
+    FOREIGN KEY ( wasteId ) REFERENCES waste( id ) ON DELETE CASCADE ON UPDATE CASCADE
 );

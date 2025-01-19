@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-public record Disposal(
+public record DisposalDTO(
         Integer id,
 
         @NotNull( message = "Waste ID cannot be null")

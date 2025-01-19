@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-public record Category(
+public record CategoryDTO(
         Integer id,
 
         @NotNull( message = "Name must not be empty")
@@ -17,7 +17,5 @@ public record Category(
         String description,
         LocalDateTime lastUpdated
 ) {
-    public Category {
 
-    }
 }

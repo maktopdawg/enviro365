@@ -20,13 +20,13 @@ public class DisposalController {
     }
 
     @GetMapping( "" )
-    List<Disposal> getAllDisposals() {
+    List<DisposalDTO> getAllDisposals() {
         return disposalRepository.getAllDisposals();
     }
 
     @GetMapping( "/{id}" )
-    Disposal getDisposal( @PathVariable Integer id ) {
-        Optional<Disposal> disposal = disposalRepository.getDisposal( id );
+    DisposalDTO getDisposal(@PathVariable Integer id ) {
+        Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
             throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
         }
@@ -35,14 +35,14 @@ public class DisposalController {
 
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    void createNewDisposal( @Valid @RequestBody Disposal disposal ) {
-        disposalRepository.insertNewDisposal( disposal );
+    void createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
+        disposalRepository.insertNewDisposal(disposalDTO);
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    void updateDisposal( @PathVariable Integer id, @Valid @RequestBody Disposal disposal ) {
-        disposalRepository.updateDisposal( disposal, id );
+    void updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
+        disposalRepository.updateDisposal(disposalDTO, id );
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )
