@@ -29,8 +29,10 @@ public class WasteController {
     }
 
     @GetMapping( "/with-disposals" )
-    List<WasteWithDisposalsDTO> getAllWasteWithDisposal() {
-        return wasteRepository.getAllWasteWithDisposal();
+    List<WasteWithDisposalsDTO> getAllWasteWithDisposal(
+            @RequestParam( value = "category", required = false ) String category
+    ) {
+        return wasteRepository.getAllWasteWithDisposal( category.toLowerCase() );
     }
 
     @GetMapping( "/{id}" )

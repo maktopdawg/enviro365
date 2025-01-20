@@ -26,7 +26,7 @@ public class CategoryRepository extends BaseRepository<CategoryDTO> {
     public void createNewCategory( CategoryDTO categoryDTO) {
         create(
                 tableName,
-                List.of( categoryDTO.name(), categoryDTO.description() ),
+                List.of( categoryDTO.name().toLowerCase(), categoryDTO.description() ),
                 "INSERT INTO " + tableName + " ( name, description, lastUpdated ) VALUES ( ?, ?, CURRENT_TIMESTAMP )"
         );
     }

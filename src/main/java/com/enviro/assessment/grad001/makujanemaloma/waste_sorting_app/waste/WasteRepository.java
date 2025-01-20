@@ -47,29 +47,15 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         delete( tableName, id );
     }
 
-    public List<WasteWithDisposalsDTO> getAllWasteWithDisposal() {
-        String sql = """
-            SELECT w.id AS wasteId,
-                   w.name AS wasteName,
-                   w.description AS wasteDescription,
-                   d.id AS disposalId,
-                   d.wasteId AS disposalWasteId,
-                   d.method AS disposalMethod,
-                   d.instructions AS disposalInstructions,
-                   d.location AS disposalLocation,
-                   d.lastUpdated AS disposalLastUpdated
-            FROM Waste w
-            LEFT JOIN Disposal d ON w.id = d.wasteId
-        """;
-
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList( sql );
+    private List<WasteWithDisposalsDTO> sqlDataMapper( List<Map<String, Object>> rows ) {
 
         Map<Integer, WasteWithDisposalsDTO> wasteMap = new HashMap<>();
 
-        for ( Map<String, Object> row : rows ) {
+        for (Map<String, Object> row : rows) {
             Integer id = ( Integer ) row.get( "wasteId" );
-            String name = ( String ) row.get( "wasteName" );
+            String name = ( String ) row.get("wasteName");
             String description = ( String ) row.get( "wasteDescription" );
+            String categoryName = ( String ) row.get( "categoryName" );
 
 
             DisposalDTO disposal = null;
@@ -80,8 +66,8 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                         ( String ) row.get( "disposalMethod" ),
                         ( String ) row.get( "disposalInstructions" ),
                         ( String ) row.get( "disposalLocation" ),
-                        row.get( "disposalLastUpdated" ) != null
-                                ? ( (Timestamp) row.get( "disposalLastUpdated" ) ).toLocalDateTime()
+                        row.get("disposalLastUpdated" ) != null
+                                ? ( ( Timestamp ) row.get( "disposalLastUpdated" ) ).toLocalDateTime()
                                 : null
                 );
             }
@@ -92,6 +78,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                         id,
                         name,
                         description,
+                        categoryName,
                         new ArrayList<>()
                 );
                 wasteMap.put( id, waste );
@@ -105,4 +92,28 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         return new ArrayList<>( wasteMap.values() );
     }
 
+    public List<WasteWithDisposalsDTO> getAllWasteWithDisposal( String categoryId ) {
+
+        String sql = """
+                SELECT w.id AS wasteId,
+                       w.name AS wasteName,
+                       w.description AS wasteDescription,
+                       c.name AS categoryName,
+                       d.id AS disposalId,
+                       d.wasteId AS disposalWasteId,
+                       d.method AS disposalMethod,
+                       d.instructions AS disposalInstructions,
+                       d.location AS disposalLocation,
+                       d.lastUpdated AS disposalLastUpdated
+                FROM Waste w
+                LEFT JOIN Category c ON w.categoryId = c.id
+                LEFT JOIN Disposal d ON w.id = d.wasteId
+                WHERE ( ? IS NULL OR c.name = ? )
+            """;
+
+        // Execute the query
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, categoryId, categoryId);
+
+        return sqlDataMapper(rows);
+    }
 }

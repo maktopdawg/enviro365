@@ -8,6 +8,7 @@ public record WasteWithDisposalsDTO(
         Integer id,
         String name,
         String description,
+        String category,
         List<DisposalDTO> disposals
 ) {
 
