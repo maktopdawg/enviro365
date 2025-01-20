@@ -2,6 +2,7 @@ package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,24 +26,37 @@ public class DisposalController {
     }
 
     @GetMapping( "/{id}" )
-    DisposalDTO getDisposal(@PathVariable Integer id ) {
+    ResponseEntity<?> getDisposal(@PathVariable Integer id ) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
-            throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
+            return ResponseEntity.status( HttpStatus.NOT_FOUND )
+                    .body( "<h1>No disposal found with ID " + id + "</h2>" );
         }
-        return disposal.get();
+        return ResponseEntity.ok( disposal.get() );
     }
 
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    void createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
-        disposalRepository.insertNewDisposal(disposalDTO);
+    ResponseEntity<?> createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
+        boolean created  = disposalRepository.insertNewDisposal(disposalDTO);
+        if ( created ) {
+            return ResponseEntity.status( HttpStatus.CREATED ).build();
+        }
+
+        return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body( "Failed to create new record" );
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    void updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
-        disposalRepository.updateDisposal(disposalDTO, id );
+    ResponseEntity<?> updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
+        boolean updated  = disposalRepository.updateDisposal(disposalDTO, id );
+        if ( updated ) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body( "Failed to update record" );
     }
 
     @ResponseStatus( HttpStatus.NO_CONTENT )

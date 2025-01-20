@@ -4,7 +4,7 @@ import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal.D
 
 import java.util.List;
 
-public record WasteWithDisposalsDTO(
+public record WasteOverviewDTO(
         Integer id,
         String name,
         String description,

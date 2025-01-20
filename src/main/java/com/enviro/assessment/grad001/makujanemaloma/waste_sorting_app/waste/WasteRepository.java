@@ -27,16 +27,16 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         return getById( tableName, id );
     }
 
-    public void insertNewWaste( WasteDTO wasteDTO) {
-        create(
+    public boolean insertNewWaste( WasteDTO wasteDTO) {
+        return createRecord(
                 tableName,
                 List.of( wasteDTO.name(), wasteDTO.description(), wasteDTO.categoryId() ),
                 "INSERT INTO " + tableName + " ( name, description, categoryId, lastUpdated ) VALUES ( ?, ?, ?, CURRENT_TIMESTAMP )"
         );
     }
 
-    public void updateWaste(WasteDTO wasteDTO, Integer id ) {
-        update(
+    public boolean updateWaste(WasteDTO wasteDTO, Integer id ) {
+        return updateRecord(
                 tableName,
                 List.of( wasteDTO.name(), wasteDTO.description(), wasteDTO.categoryId(), id ),
                 "UPDATE " + tableName + " SET name = ?, description = ?, categoryId = ?, lastUpdated = CURRENT_TIMESTAMP WHERE id = ?"
@@ -47,9 +47,9 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         delete( tableName, id );
     }
 
-    private List<WasteWithDisposalsDTO> sqlDataMapper( List<Map<String, Object>> rows ) {
+    private List<WasteOverviewDTO> sqlDataMapper(List<Map<String, Object>> rows ) {
 
-        Map<Integer, WasteWithDisposalsDTO> wasteMap = new HashMap<>();
+        Map<Integer, WasteOverviewDTO> wasteMap = new HashMap<>();
 
         for (Map<String, Object> row : rows) {
             Integer id = ( Integer ) row.get( "wasteId" );
@@ -72,9 +72,9 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                 );
             }
 
-            WasteWithDisposalsDTO waste = wasteMap.get( id );
+            WasteOverviewDTO waste = wasteMap.get( id );
             if ( waste == null ) {
-                waste = new WasteWithDisposalsDTO(
+                waste = new WasteOverviewDTO(
                         id,
                         name,
                         description,
@@ -92,7 +92,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         return new ArrayList<>( wasteMap.values() );
     }
 
-    public List<WasteWithDisposalsDTO> getAllWasteWithDisposal( String categoryId ) {
+    public List<WasteOverviewDTO> getAllWasteWithDisposal(String categoryId ) {
 
         String sql = """
                 SELECT w.id AS wasteId,
@@ -111,9 +111,33 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                 WHERE ( ? IS NULL OR c.name = ? )
             """;
 
-        // Execute the query
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, categoryId, categoryId);
 
-        return sqlDataMapper(rows);
+        return sqlDataMapper( rows );
+    }
+
+    public Optional<WasteOverviewDTO> getWasteOverviewById( Integer wasteId ) {
+        String sql = """
+                SELECT w.id AS wasteId,
+                       w.name AS wasteName,
+                       w.description AS wasteDescription,
+                       c.name AS categoryName,
+                       d.id AS disposalId,
+                       d.wasteId AS disposalWasteId,
+                       d.method AS disposalMethod,
+                       d.instructions AS disposalInstructions,
+                       d.location AS disposalLocation,
+                       d.lastUpdated AS disposalLastUpdated
+                FROM Waste w
+                LEFT JOIN Category c ON w.categoryId = c.id
+                LEFT JOIN Disposal d ON w.id = d.wasteId
+                WHERE w.id = ?
+            """;
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, wasteId);
+        if ( rows.isEmpty() ) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable( sqlDataMapper( rows ).get( 0 ) );
     }
 }

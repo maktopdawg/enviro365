@@ -2,6 +2,7 @@ package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,28 +27,40 @@ public class CategoryController {
     }
 
     @GetMapping( "/{id}" )
-    CategoryDTO getCategoryById (@PathVariable Integer id) {
+    ResponseEntity<?> getCategoryById (@PathVariable Integer id ) {
+        Optional<CategoryDTO> category = categoryRepository.getCategoryById( id );
 
-        Optional<CategoryDTO>  category = categoryRepository.getCategoryById( id );
         if ( category.isEmpty() ) {
-            throw new CategoryNotFoundException( "Category with id " + id + " not found" );
+            return ResponseEntity.status( HttpStatus.NOT_FOUND )
+                    .body( "<h3>Category with ID " + id+ " not found</h3>" );
         }
 
-        return category.get();
+        return ResponseEntity.ok( category.get() );
     }
 
     // POST
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    void createNewCategory ( @Valid  @RequestBody CategoryDTO categoryDTO) {
-        categoryRepository.createNewCategory(categoryDTO);
+    ResponseEntity<?> createNewCategory ( @Valid  @RequestBody CategoryDTO categoryDTO) {
+        boolean created  = categoryRepository.createNewCategory( categoryDTO );
+        if ( created ) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+        return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body( "Failed to create new record" );
     }
 
     // PUT
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    void updateCategory (@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Integer id ) {
-        categoryRepository.updateCategory(categoryDTO, id );
+    ResponseEntity<?> updateCategory (@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Integer id ) {
+        boolean updated = categoryRepository.updateCategory(categoryDTO, id );
+        if ( updated ) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body( "Failed to update record" );
     }
 
     // DELETE

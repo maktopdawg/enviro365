@@ -23,16 +23,16 @@ public class DisposalRepository extends BaseRepository<DisposalDTO> {
         return getById( tableName, id );
     }
 
-    public void insertNewDisposal( DisposalDTO disposalDTO) {
-        create(
+    public boolean insertNewDisposal( DisposalDTO disposalDTO) {
+        return createRecord(
                 tableName,
                 List.of( disposalDTO.wasteId(), disposalDTO.method(), disposalDTO.instructions(), disposalDTO.location()  ),
                 "INSERT INTO " + tableName + " ( wasteId, method, instructions, location, lastUpdated ) VALUES ( ?, ?, ?, ?, CURRENT_TIMESTAMP )"
         );
     }
 
-    public void updateDisposal(DisposalDTO disposalDTO, Integer id ) {
-        update(
+    public boolean updateDisposal(DisposalDTO disposalDTO, Integer id ) {
+        return updateRecord(
                 tableName,
                 List.of( disposalDTO.wasteId(), disposalDTO.method(), disposalDTO.instructions(), disposalDTO.location(), id ),
                 "UPDATE " + tableName + " SET wasteId = ?, method = ?, instructions = ?, location = ?, lastUpdated = CURRENT_TIMESTAMP where id = ?"

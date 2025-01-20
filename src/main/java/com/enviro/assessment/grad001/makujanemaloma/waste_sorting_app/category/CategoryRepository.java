@@ -23,16 +23,16 @@ public class CategoryRepository extends BaseRepository<CategoryDTO> {
         return getById( tableName, id );
     }
 
-    public void createNewCategory( CategoryDTO categoryDTO) {
-        create(
+    public boolean createNewCategory( CategoryDTO categoryDTO) {
+        return createRecord(
                 tableName,
                 List.of( categoryDTO.name().toLowerCase(), categoryDTO.description() ),
                 "INSERT INTO " + tableName + " ( name, description, lastUpdated ) VALUES ( ?, ?, CURRENT_TIMESTAMP )"
         );
     }
 
-    public void updateCategory(CategoryDTO categoryDTO, Integer id ) {
-        update(
+    public boolean updateCategory(CategoryDTO categoryDTO, Integer id ) {
+        return updateRecord(
                 tableName,
                 List.of( categoryDTO.name(), categoryDTO.description(), id ),
                 "UPDATE " + tableName + " SET name = ?, description = ?, lastUpdated = CURRENT_TIMESTAMP WHERE id = ?"

@@ -28,18 +28,18 @@ public abstract class BaseRepository<T> {
                 .optional();
     }
 
-    public void create( String tableName, List<Object> params, String sqlStatement ) {
+    public boolean createRecord( String tableName, List<Object> params, String sqlStatement ) {
         var updated = jdbcClient.sql( sqlStatement )
                 .params( params )
                 .update();
-        Assert.state( updated == 1, "Failed to create new record in table: " + tableName );
+        return updated == 1;
     }
 
-    public void update( String tableName, List<Object> params, String sqlStatement ) {
+    public boolean updateRecord( String tableName, List<Object> params, String sqlStatement ) {
         var updated = jdbcClient.sql( sqlStatement )
                 .params( params )
                 .update();
-        Assert.state( updated == 1, "Failed to update record in table: " + tableName );
+        return updated == 1;
     }
 
     public void delete( String tableName, Integer id ) {
