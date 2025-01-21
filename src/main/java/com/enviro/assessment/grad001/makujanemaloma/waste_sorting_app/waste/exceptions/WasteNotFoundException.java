@@ -1,4 +1,4 @@
-package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste;
+package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,5 +1,6 @@
 package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category;
 
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category.exceptions.CategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,9 @@ public class CategoryController {
     @GetMapping( "/{id}" )
     ResponseEntity<?> getCategoryById (@PathVariable Integer id ) {
         Optional<CategoryDTO> category = categoryRepository.getCategoryById( id );
-
         if ( category.isEmpty() ) {
-            return ResponseEntity.status( HttpStatus.NOT_FOUND )
-                    .body( "<h3>Category with ID " + id+ " not found</h3>" );
+            throw new CategoryNotFoundException( "Category with id " + id + " not found" );
         }
-
         return ResponseEntity.ok( category.get() );
     }
 
@@ -54,11 +52,14 @@ public class CategoryController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
     ResponseEntity<?> updateCategory (@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Integer id ) {
+        Optional<CategoryDTO> category = categoryRepository.getCategoryById( id );
+        if ( category.isEmpty() ) {
+            throw new CategoryNotFoundException( "Category with id " + id + " not found" );
+        }
         boolean updated = categoryRepository.updateCategory(categoryDTO, id );
         if ( updated ) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to update record" );
     }
@@ -67,6 +68,10 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     void deleteCategoryById(@PathVariable Integer id) {
+        Optional<CategoryDTO> category = categoryRepository.getCategoryById( id );
+        if ( category.isEmpty() ) {
+            throw new CategoryNotFoundException( "Category with id " + id + " not found" );
+        }
         categoryRepository.deleteCategoryById( id );
     }
 }

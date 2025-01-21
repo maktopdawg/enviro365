@@ -1,5 +1,6 @@
 package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal;
 
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal.exceptions.DisposalNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,7 @@ public class DisposalController {
     ResponseEntity<?> getDisposal(@PathVariable Integer id ) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
-            return ResponseEntity.status( HttpStatus.NOT_FOUND )
-                    .body( "<h1>No disposal found with ID " + id + "</h2>" );
+            throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
         }
         return ResponseEntity.ok( disposal.get() );
     }
@@ -50,6 +50,11 @@ public class DisposalController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
     ResponseEntity<?> updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
+        Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
+        if ( disposal.isEmpty() ) {
+            throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
+        }
+
         boolean updated  = disposalRepository.updateDisposal(disposalDTO, id );
         if ( updated ) {
             return ResponseEntity.ok().build();
@@ -62,6 +67,11 @@ public class DisposalController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @DeleteMapping( "/{id}" )
     void deleteDisposalById( @PathVariable Integer id ) {
+        Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
+        if ( disposal.isEmpty() ) {
+            throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
+        }
+
         disposalRepository.deleteDisposal( id );
     }
 }

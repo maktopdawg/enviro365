@@ -1,6 +1,7 @@
 package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste;
 
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category.CategoryRepository;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.exceptions.WasteNotFoundException;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,11 @@ public class WasteController {
     private final JdbcClient jdbcClient;
     private final CategoryRepository categoryRepository;
 
-    public WasteController(WasteRepository wasteRepository, JdbcClient jdbcClient, CategoryRepository categoryRepository) {
+    public WasteController(
+            WasteRepository wasteRepository,
+            JdbcClient jdbcClient,
+            CategoryRepository categoryRepository
+    ) {
         this.wasteRepository = wasteRepository;
         this.jdbcClient = jdbcClient;
         this.categoryRepository = categoryRepository;
@@ -37,9 +42,9 @@ public class WasteController {
     ResponseEntity<?> getWaste( @PathVariable Integer id ) {
         Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
         if ( waste.isEmpty() ) {
-            return ResponseEntity.status( HttpStatus.NOT_FOUND )
-                    .body( "<h1>No waste found with ID " + id + "</h2>" );
+            throw new WasteNotFoundException( "Waste with id " + id + " not found" );
         }
+
         return ResponseEntity.ok( waste.get() );
     }
 
@@ -54,8 +59,7 @@ public class WasteController {
     ResponseEntity<?> getWasteOverviewById( @PathVariable Integer id ) {
         Optional<WasteOverviewDTO> waste = wasteRepository.getWasteOverviewById( id );
         if ( waste.isEmpty() ) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body( "<h1>No waste found with ID " + id + "</h2>" );
+            throw new WasteNotFoundException( "Waste with id " + id + " not found" );
         }
         return ResponseEntity.ok( waste.get() );
     }
@@ -74,6 +78,11 @@ public class WasteController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
     ResponseEntity<?> updateWaste( @PathVariable Integer id, @Valid @RequestBody WasteDTO wasteDTO) {
+        Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
+        if ( waste.isEmpty() ) {
+            throw new WasteNotFoundException( "Waste with id " + id + " not found" );
+        }
+
         boolean updated = wasteRepository.updateWaste(wasteDTO, id );
         if ( updated ) {
             return ResponseEntity.status( HttpStatus.NO_CONTENT ).build();
@@ -85,6 +94,10 @@ public class WasteController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @DeleteMapping( "/{id}" )
     void deleteWasteById( @PathVariable Integer id ) {
+        Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
+        if ( waste.isEmpty() ) {
+            throw new WasteNotFoundException( "Waste with id " + id + " not found" );
+        }
         wasteRepository.deleteWasteById( id );
     }
 }
