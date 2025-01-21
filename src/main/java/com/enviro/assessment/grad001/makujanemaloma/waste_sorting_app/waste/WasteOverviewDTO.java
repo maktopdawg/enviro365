@@ -9,6 +9,7 @@ public record WasteOverviewDTO(
         String name,
         String description,
         String category,
+        String categoryDescription,
         List<DisposalDTO> disposals
 ) {
 

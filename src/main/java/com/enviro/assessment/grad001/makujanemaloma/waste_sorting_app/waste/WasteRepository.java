@@ -56,6 +56,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
             String name = ( String ) row.get("wasteName");
             String description = ( String ) row.get( "wasteDescription" );
             String categoryName = ( String ) row.get( "categoryName" );
+            String categoryDescription = ( String ) row.get( "categoryDescription" );
 
 
             DisposalDTO disposal = null;
@@ -79,6 +80,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                         name,
                         description,
                         categoryName,
+                        categoryDescription,
                         new ArrayList<>()
                 );
                 wasteMap.put( id, waste );
@@ -99,6 +101,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                        w.name AS wasteName,
                        w.description AS wasteDescription,
                        c.name AS categoryName,
+                       c.description AS categoryDescription,
                        d.id AS disposalId,
                        d.wasteId AS disposalWasteId,
                        d.method AS disposalMethod,
@@ -122,6 +125,7 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                        w.name AS wasteName,
                        w.description AS wasteDescription,
                        c.name AS categoryName,
+                       c.description AS categoryDescription,
                        d.id AS disposalId,
                        d.wasteId AS disposalWasteId,
                        d.method AS disposalMethod,
