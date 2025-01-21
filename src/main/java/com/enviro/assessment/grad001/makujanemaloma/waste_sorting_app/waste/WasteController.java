@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +27,20 @@ public class WasteController {
     }
 
     @GetMapping( "" )
-    List<WasteDTO> getAllWaste() {
-        return wasteRepository.getAllWaste();
+    List<WasteWithCategoryDTO> getAllWaste(
+            @RequestParam( value = "category", required = false ) String category
+    ) {
+        return wasteRepository.getAllWasteWithCategory( category != null ? category.toLowerCase() : category );
+    }
+
+    @GetMapping( "/{id}" )
+    ResponseEntity<?> getWaste( @PathVariable Integer id ) {
+        Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
+        if ( waste.isEmpty() ) {
+            return ResponseEntity.status( HttpStatus.NOT_FOUND )
+                    .body( "<h1>No waste found with ID " + id + "</h2>" );
+        }
+        return ResponseEntity.ok( waste.get() );
     }
 
     @GetMapping( "/overview" )
@@ -44,17 +57,6 @@ public class WasteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body( "<h1>No waste found with ID " + id + "</h2>" );
         }
-
-        return ResponseEntity.ok( waste.get() );
-    }
-
-    @GetMapping( "/{id}" )
-    ResponseEntity<?> getWaste( @PathVariable Integer id ) {
-        Optional<WasteDTO> waste = wasteRepository.getWaste( id );
-        if ( waste.isEmpty() ) {
-            return ResponseEntity.status( HttpStatus.NOT_FOUND )
-                    .body( "<h1>No waste found with ID " + id + "</h2>" );
-        }
         return ResponseEntity.ok( waste.get() );
     }
 
@@ -65,7 +67,6 @@ public class WasteController {
         if ( created ) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
-
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to create new record" );
     }
@@ -77,7 +78,6 @@ public class WasteController {
         if ( updated ) {
             return ResponseEntity.status( HttpStatus.NO_CONTENT ).build();
         }
-
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to update record" );
     }

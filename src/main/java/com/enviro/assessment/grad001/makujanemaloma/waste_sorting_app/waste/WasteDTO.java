@@ -2,6 +2,8 @@ package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 
@@ -19,5 +21,4 @@ public record WasteDTO(
         Integer categoryId,
         LocalDateTime lastUpdated
 ) {
-
 }

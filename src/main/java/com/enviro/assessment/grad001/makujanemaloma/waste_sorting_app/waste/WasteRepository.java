@@ -140,4 +140,41 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
         }
         return Optional.ofNullable( sqlDataMapper( rows ).get( 0 ) );
     }
+
+    public List<WasteWithCategoryDTO> getAllWasteWithCategory( String categoryId ) {
+        String sql = """
+            SELECT w.id AS wasteId,
+                   w.name AS wasteName,
+                   w.description AS wasteDescription,
+                   c.name AS categoryName,
+                   c.description AS categoryDescription
+            FROM Waste w
+            LEFT JOIN Category c ON w.categoryId = c.id
+            WHERE ( ? IS NULL OR c.name = ? )
+            """;
+
+        return jdbcClient.sql( sql )
+                .param( 1, categoryId )
+                .param( 2, categoryId )
+                .query( WasteWithCategoryDTO.class )
+                .list();
+    }
+
+    public Optional<WasteWithCategoryDTO> getWasteWithCategory( Integer wasteId ) {
+        String sql = """
+            SELECT w.id AS wasteId,
+                   w.name AS wasteName,
+                   w.description AS wasteDescription,
+                   c.name AS categoryName,
+                   c.description AS categoryDescription
+            FROM Waste w
+            LEFT JOIN Category c ON w.categoryId = c.id
+            WHERE w.id = ?
+            """;
+
+        return jdbcClient.sql( sql )
+                .param( 1, wasteId )
+                .query( WasteWithCategoryDTO.class )
+                .optional();
+    }
 }
