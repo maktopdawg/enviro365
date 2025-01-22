@@ -37,7 +37,6 @@ public class CategoryController {
     }
 
     // POST
-    @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
     ResponseEntity<?> createNewCategory ( @Valid  @RequestBody CategoryDTO categoryDTO) {
         boolean created  = categoryRepository.createNewCategory( categoryDTO );

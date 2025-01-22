@@ -1,0 +1,44 @@
+package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.recycling;
+
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.BaseRepository;
+import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public class RecyclingTipRepository extends BaseRepository<RecyclingTipDTO> {
+    private final String tableName = "recyclingTips";
+
+    public RecyclingTipRepository( JdbcClient jdbcClient ) {
+        super( jdbcClient, RecyclingTipDTO.class );
+    }
+
+    public List<RecyclingTipDTO> getAllRecyclingTips() {
+        return getAll( tableName );
+    }
+
+    public Optional<RecyclingTipDTO> getRecyclingTipById(Integer id ) {
+        return getById( tableName, id );
+    }
+    public boolean createNewRecyclingTip( RecyclingTipDTO recyclingTipDTO ) {
+        return createRecord(
+                tableName,
+                List.of( recyclingTipDTO.title(), recyclingTipDTO.tip(), recyclingTipDTO.categoryId(), recyclingTipDTO.wasteId() ),
+                "INSERT INTO " + tableName + " ( title, tip, categoryId, wasteId, lastUpdated ) VALUES ( ?, ?, ?, ?, CURRENT_TIMESTAMP )"
+        );
+    }
+
+    public boolean updateRecyclingTip( RecyclingTipDTO recyclingTipDTO, Integer id ) {
+        return updateRecord(
+                tableName,
+                List.of( recyclingTipDTO.title(), recyclingTipDTO.tip(), recyclingTipDTO.categoryId(), recyclingTipDTO.wasteId(), id ),
+                "UPDATE " + tableName + " SET  title = ?, tip = ?, categoryId = ?, wasteId = ?, lastUpdated = CURRENT_TIMESTAMP where id = ?"
+        );
+    }
+
+    public void deleteRecyclingTip( Integer id ) {
+        delete( tableName, id );
+    }
+}

@@ -2,6 +2,7 @@ package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.exception
 
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category.exceptions.CategoryNotFoundException;
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal.exceptions.DisposalNotFoundException;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.recycling.exceptions.RecyclingTipNotFound;
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.exceptions.WasteNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler( CategoryNotFoundException.class )
     public ResponseEntity<Map<String, Object>> handleCategoryNotFoundException( CategoryNotFoundException ex ) {
-        return buildErrorResponse( "Category Not Found", HttpStatus.NOT_FOUND, ex.getMessage(),  "/api/category" );
+        return buildErrorResponse( "Category Not Found", HttpStatus.NOT_FOUND, ex.getMessage(),  "/api/categories" );
     }
 
     /**
@@ -54,6 +55,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler( WasteNotFoundException.class )
     public ResponseEntity<Map<String, Object>> handleWasteNotFoundException( WasteNotFoundException ex ) {
         return buildErrorResponse( "Waste Not Found", HttpStatus.NOT_FOUND, ex.getMessage(),  "/api/waste" );
+    }
+
+    /**
+     * Handles `WasteNotFoundException`.
+     */
+    @ExceptionHandler( RecyclingTipNotFound.class )
+    public ResponseEntity<Map<String, Object>> handleRecyclingTipNotFoundException( RecyclingTipNotFound ex ) {
+        return buildErrorResponse( "Recycling Tip Not Found", HttpStatus.NOT_FOUND, ex.getMessage(),  "/api/recycling-tip" );
     }
 
     /**

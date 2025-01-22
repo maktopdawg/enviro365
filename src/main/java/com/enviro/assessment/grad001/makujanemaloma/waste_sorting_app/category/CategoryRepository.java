@@ -19,7 +19,7 @@ public class CategoryRepository extends BaseRepository<CategoryDTO> {
         return getAll( tableName );
     }
 
-    public Optional<CategoryDTO> getCategoryById(Integer id ) {
+    public Optional<CategoryDTO> getCategoryById( Integer id ) {
         return getById( tableName, id );
     }
 

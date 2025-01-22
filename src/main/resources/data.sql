@@ -32,3 +32,11 @@ VALUES
     (8, 'Recycle', 'Fold and drop off at a scrap metal collection point.', 'Scrap Metal Yard', CURRENT_TIMESTAMP),
     (9, 'E-Waste Disposal', 'Bring to an authorized e-waste recycling facility.', 'E-Waste Recycling Facility', CURRENT_TIMESTAMP),
     (10, 'Special Collection', 'Drop off at a hazardous waste collection site.', 'Hazardous Waste Center', CURRENT_TIMESTAMP);
+
+INSERT INTO RecyclingTips (title, tip, categoryId, wasteId, lastUpdated)
+VALUES
+    ('Reuse Plastic Bottles', 'Consider reusing plastic bottles for storage or DIY projects.', 1, NULL, CURRENT_TIMESTAMP),
+    ('Compost Organic Waste', 'Organic waste can be composted to create nutrient-rich soil.', 2, NULL, CURRENT_TIMESTAMP),
+    ('Recycle Glass Jars', 'Glass jars can be cleaned and reused for storing food or other items.', 3, NULL, CURRENT_TIMESTAMP),
+    ('Metal Cans Recycling', 'Flatten metal cans to save space before recycling.', 4, NULL, CURRENT_TIMESTAMP),
+    ('Dispose of Batteries Properly', 'Drop old batteries at designated e-waste collection centers.', NULL, 9, CURRENT_TIMESTAMP);
