@@ -57,7 +57,7 @@ public class WasteController {
         return wasteRepository.getAllWasteWithDisposal( category != null ? category.toLowerCase() : category );
     }
 
-    @GetMapping( "/overview/{id}" )
+    @GetMapping( "/{id}/overview" )
     ResponseEntity<?> getWasteOverviewById( @PathVariable Integer id ) {
         Optional<WasteOverviewDTO> waste = wasteRepository.getWasteOverviewById( id );
         if ( waste.isEmpty() ) {

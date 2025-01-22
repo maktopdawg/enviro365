@@ -57,7 +57,7 @@ public class CategoryController {
         }
         boolean updated = categoryRepository.updateCategory(categoryDTO, id );
         if ( updated ) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to update record" );

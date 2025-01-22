@@ -37,25 +37,27 @@ public class RecyclingTipController {
         return ResponseEntity.ok( recyclingTipDTO.get() );
     }
 
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     @PostMapping( "" )
     ResponseEntity<?> createRecyclingTip( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO ) {
         boolean created = recyclingTipRepository.createNewRecyclingTip( recyclingTipDTO );
         if ( created ) {
-            return ResponseEntity.ok( recyclingTipDTO );
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to create new record" );
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping( "/{id}" )
-    ResponseEntity<?> updateCategory (@Valid @RequestBody RecyclingTipDTO recyclingTipDTO, @PathVariable Integer id ) {
+    ResponseEntity<?> updateCategory ( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO, @PathVariable Integer id ) {
         Optional<RecyclingTipDTO> recyclingTip = recyclingTipRepository.getRecyclingTipById( id );
         if ( recyclingTip.isEmpty() ) {
             throw new CategoryNotFoundException( "Recycling Tip with id " + id + " not found" );
         }
         boolean updated = recyclingTipRepository.updateRecyclingTip(recyclingTipDTO, id );
         if ( updated ) {
-            return ResponseEntity.ok( recyclingTip );
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
                 .body( "Failed to update record" );
