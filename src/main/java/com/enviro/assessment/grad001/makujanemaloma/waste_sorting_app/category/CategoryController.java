@@ -73,4 +73,18 @@ public class CategoryController {
         }
         categoryRepository.deleteCategoryById( id );
     }
+
+    @GetMapping( "/recycling-tips" )
+    List<CategoryWithTipsDTO> getCategoriesWithTips() {
+        return categoryRepository.getCategoriesWithTips();
+    }
+
+    @GetMapping( "/{id}/recycling-tips" )
+    ResponseEntity<?> getCategoryWithTipsById( @PathVariable Integer id ) {
+        Optional<CategoryWithTipsDTO> category = categoryRepository.getCategoryWithTipsById( id );
+        if ( category.isEmpty() ) {
+            throw new CategoryNotFoundException( "Category with id " + id + " not found" );
+        }
+        return ResponseEntity.ok( category.get() );
+    }
 }

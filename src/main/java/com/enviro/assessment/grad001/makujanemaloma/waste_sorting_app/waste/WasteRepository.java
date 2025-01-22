@@ -2,6 +2,8 @@ package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste;
 
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.BaseRepository;
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.disposal.DisposalDTO;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.recycling.RecyclingTipDTO;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.models.WasteWithTipsDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -180,5 +182,96 @@ public class WasteRepository extends BaseRepository<WasteDTO> {
                 .param( 1, wasteId )
                 .query( WasteWithCategoryDTO.class )
                 .optional();
+    }
+
+    public List<WasteWithTipsDTO> getAllWasteWithTips() {
+        String sql = """
+            SELECT w.id AS wasteId,
+                   w.name AS wasteName,
+                   w.categoryId as categoryId,
+                   w.description AS wasteDescription,
+                   c.name AS categoryName,
+                   rt.id AS recycleTipId,
+                   rt.title AS title,
+                   rt.tip AS tip,
+                   rt.wasteId AS wasteId,
+                   rt.lastUpdated AS lastUpdated
+            FROM Waste w
+            LEFT JOIN Category c ON w.categoryId = c.id
+            LEFT JOIN RecyclingTips rt ON w.id = rt.wasteId
+        """;
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+        return sqlDataMapperForTips(rows);
+    }
+
+    public Optional<WasteWithTipsDTO> getWasteWithTipsByID( Integer wasteId ) {
+        String sql = """
+            SELECT w.id AS wasteId,
+                   w.name AS wasteName,
+                   w.categoryId as categoryId,
+                   w.description AS wasteDescription,
+                   c.name AS categoryName,
+                   rt.id AS recycleTipId,
+                   rt.title AS title,
+                   rt.tip AS tip,
+                   rt.wasteId AS wasteId,
+                   rt.lastUpdated AS lastUpdated
+            FROM Waste w
+            LEFT JOIN Category c ON w.categoryId = c.id
+            LEFT JOIN RecyclingTips rt ON w.id = rt.wasteId
+            WHERE w.id = ?
+        """;
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList( sql, wasteId );
+        if ( rows.isEmpty() ) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable( sqlDataMapperForTips( rows ).get( 0 ) );
+    }
+
+    private List<WasteWithTipsDTO> sqlDataMapperForTips(List<Map<String, Object>> rows ) {
+
+        Map<Integer, WasteWithTipsDTO> wasteMap = new HashMap<>();
+
+        for (Map<String, Object> row : rows) {
+            Integer id = ( Integer ) row.get( "wasteId" );
+            String name = ( String ) row.get("wasteName");
+            String description = ( String ) row.get( "wasteDescription" );
+            String categoryName = ( String ) row.get( "categoryName" );
+
+
+            RecyclingTipDTO recycleTip = null;
+            if ( row.get( "recycleTipId" ) != null ) {
+                recycleTip = new RecyclingTipDTO(
+                        ( Integer ) row.get( "recycleTipId" ),
+                        ( String ) row.get( "title" ),
+                        ( String ) row.get( "tip" ),
+                        null,
+                        ( Integer ) row.get( "wasteId" ),
+                        row.get("lastUpdated" ) != null
+                                ? ( ( Timestamp ) row.get( "lastUpdated" ) ).toLocalDateTime()
+                                : null
+                );
+            }
+
+            WasteWithTipsDTO waste = wasteMap.get( id );
+            if ( waste == null ) {
+                waste = new WasteWithTipsDTO(
+                        id,
+                        name,
+                        description,
+                        categoryName,
+                        new ArrayList<>()
+                );
+                wasteMap.put( id, waste );
+            }
+
+            if ( recycleTip != null ) {
+                waste.recyclingTips().add( recycleTip );
+            }
+        }
+
+        return new ArrayList<>( wasteMap.values() );
     }
 }

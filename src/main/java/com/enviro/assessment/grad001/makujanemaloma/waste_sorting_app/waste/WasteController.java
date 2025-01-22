@@ -1,7 +1,9 @@
 package com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste;
 
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.category.CategoryRepository;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.recycling.RecyclingTipDTO;
 import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.exceptions.WasteNotFoundException;
+import com.enviro.assessment.grad001.makujanemaloma.waste_sorting_app.waste.models.WasteWithTipsDTO;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -99,5 +101,19 @@ public class WasteController {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
         }
         wasteRepository.deleteWasteById( id );
+    }
+
+    @GetMapping( "/recycling-tips" )
+    List<WasteWithTipsDTO> getWasteWithRecyclingTips() {
+        return wasteRepository.getAllWasteWithTips();
+    }
+
+    @GetMapping( "/{id}/recycling-tips" )
+    ResponseEntity<?> getWasteWithRecyclingTipsById( @PathVariable Integer id ) {
+        Optional<WasteWithTipsDTO> waste = wasteRepository.getWasteWithTipsByID( id );
+        if ( waste.isEmpty() ) {
+            throw new WasteNotFoundException( "Waste with id " + id + " not found" );
+        }
+        return ResponseEntity.ok( waste.get() );
     }
 }
