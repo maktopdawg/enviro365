@@ -38,7 +38,7 @@ public class CategoryController {
      * @return A list of CategoryDTO objects representing all categories.
      */
     @GetMapping("")
-    List<CategoryDTO> getAllCategories() {
+    public List<CategoryDTO> getAllCategories() {
         return categoryRepository.getAllCategories();
     }
 
@@ -49,7 +49,7 @@ public class CategoryController {
      * @return A ResponseEntity containing the category if found, otherwise throws a CategoryNotFoundException.
      */
     @GetMapping( "/{id}" )
-    ResponseEntity<?> getCategoryById (@PathVariable Integer id ) {
+    public ResponseEntity<?> getCategoryById (@PathVariable Integer id ) {
         Optional<CategoryDTO> category = categoryRepository.getCategoryById( id );
         if ( category.isEmpty() ) {
             throw new CategoryNotFoundException( "Category with id " + id + " not found" );

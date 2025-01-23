@@ -37,7 +37,7 @@ public class DisposalController {
      * @return A list of DisposalDTO objects representing all disposals.
      */
     @GetMapping( "" )
-    List<DisposalDTO> getAllDisposals() {
+    public List<DisposalDTO> getAllDisposals() {
         return disposalRepository.getAllDisposals();
     }
 
@@ -48,7 +48,7 @@ public class DisposalController {
      * @return A ResponseEntity containing the DisposalDTO if found, or an error response if not found.
      */
     @GetMapping( "/{id}" )
-    ResponseEntity<?> getDisposal(@PathVariable Integer id ) {
+    public ResponseEntity<?> getDisposal(@PathVariable Integer id ) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
             throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
@@ -64,7 +64,7 @@ public class DisposalController {
      */
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    ResponseEntity<?> createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
+    public ResponseEntity<?> createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
         boolean created  = disposalRepository.insertNewDisposal(disposalDTO);
         if ( created ) {
             return ResponseEntity.status( HttpStatus.CREATED ).build();
@@ -83,7 +83,7 @@ public class DisposalController {
      */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    ResponseEntity<?> updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
+    public ResponseEntity<?> updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
             throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );
@@ -105,7 +105,7 @@ public class DisposalController {
      */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @DeleteMapping( "/{id}" )
-    void deleteDisposalById( @PathVariable Integer id ) {
+    public void deleteDisposalById( @PathVariable Integer id ) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
         if ( disposal.isEmpty() ) {
             throw new DisposalNotFoundException( "Disposal with id " + id + " not found" );

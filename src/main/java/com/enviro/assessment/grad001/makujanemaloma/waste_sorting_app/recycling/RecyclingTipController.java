@@ -39,7 +39,7 @@ public class RecyclingTipController {
      * @return A list of RecyclingTipDTO objects representing all recycling tips.
      */
     @GetMapping( "" )
-    List<RecyclingTipDTO> getAllTips() {
+    public List<RecyclingTipDTO> getAllTips() {
         return recyclingTipRepository.getAllRecyclingTips();
     }
 
@@ -50,7 +50,7 @@ public class RecyclingTipController {
      * @return A ResponseEntity containing the RecyclingTipDTO if found, otherwise throws RecyclingTipNotFound exception.
      */
     @GetMapping( "/{id}" )
-    ResponseEntity<?> getRecyclingTipById( @PathVariable Integer id ) {
+    public ResponseEntity<?> getRecyclingTipById( @PathVariable Integer id ) {
         Optional<RecyclingTipDTO> recyclingTipDTO = recyclingTipRepository.getRecyclingTipById( id );
         if ( recyclingTipDTO.isEmpty() ) {
             throw new RecyclingTipNotFound( "Recycling Tip with id " + id + " not found"  );
@@ -66,7 +66,7 @@ public class RecyclingTipController {
      */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PostMapping( "" )
-    ResponseEntity<?> createRecyclingTip( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO ) {
+    public ResponseEntity<?> createRecyclingTip( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO ) {
         boolean created = recyclingTipRepository.createNewRecyclingTip( recyclingTipDTO );
         if ( created ) {
             return ResponseEntity.ok().build();
@@ -84,10 +84,10 @@ public class RecyclingTipController {
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping( "/{id}" )
-    ResponseEntity<?> updateCategory ( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO, @PathVariable Integer id ) {
+    public ResponseEntity<?> updateCategory ( @Valid @RequestBody RecyclingTipDTO recyclingTipDTO, @PathVariable Integer id ) {
         Optional<RecyclingTipDTO> recyclingTip = recyclingTipRepository.getRecyclingTipById( id );
         if ( recyclingTip.isEmpty() ) {
-            throw new CategoryNotFoundException( "Recycling Tip with id " + id + " not found" );
+            throw new RecyclingTipNotFound( "Recycling Tip with id " + id + " not found" );
         }
         boolean updated = recyclingTipRepository.updateRecyclingTip(recyclingTipDTO, id );
         if ( updated ) {
@@ -104,10 +104,10 @@ public class RecyclingTipController {
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    void deleteCategoryById(@PathVariable Integer id) {
+    public void deleteCategoryById(@PathVariable Integer id) {
         Optional<RecyclingTipDTO> recyclingTip = recyclingTipRepository.getRecyclingTipById( id );
         if ( recyclingTip.isEmpty() ) {
-            throw new CategoryNotFoundException( "Recycling Tip with id " + id + " not found" );
+            throw new RecyclingTipNotFound( "Recycling Tip with id " + id + " not found" );
         }
         recyclingTipRepository.deleteRecyclingTip( id );
     }

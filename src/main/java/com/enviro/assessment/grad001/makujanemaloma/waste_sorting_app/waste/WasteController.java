@@ -54,7 +54,7 @@ public class WasteController {
      * @return A list of `WasteWithCategoryDTO` objects representing the waste records.
      */
     @GetMapping( "" )
-    List<WasteWithCategoryDTO> getAllWaste(
+    public List<WasteWithCategoryDTO> getAllWaste(
             @RequestParam( value = "category", required = false ) String category
     ) {
         return wasteRepository.getAllWasteWithCategory( category != null ? category.toLowerCase() : category );
@@ -68,7 +68,7 @@ public class WasteController {
      * @throws WasteNotFoundException if no waste record is found with the given ID.
      */
     @GetMapping( "/{id}" )
-    ResponseEntity<?> getWaste( @PathVariable Integer id ) {
+    public ResponseEntity<?> getWaste( @PathVariable Integer id ) {
         Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
@@ -85,7 +85,7 @@ public class WasteController {
      * @return A list of `WasteOverviewDTO` objects representing waste with disposal data.
      */
     @GetMapping( "/overview" )
-    List<WasteOverviewDTO> getAllWasteWithDisposal(
+    public List<WasteOverviewDTO> getAllWasteWithDisposal(
             @RequestParam( value = "category", required = false ) String category
     ) {
         return wasteRepository.getAllWasteWithDisposal( category != null ? category.toLowerCase() : category );
@@ -99,7 +99,7 @@ public class WasteController {
      * @throws WasteNotFoundException if no waste overview is found for the given ID.
      */
     @GetMapping( "/{id}/overview" )
-    ResponseEntity<?> getWasteOverviewById( @PathVariable Integer id ) {
+    public ResponseEntity<?> getWasteOverviewById( @PathVariable Integer id ) {
         Optional<WasteOverviewDTO> waste = wasteRepository.getWasteOverviewById( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
@@ -116,7 +116,7 @@ public class WasteController {
      */
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
-    ResponseEntity<?> createNewWaste( @Valid @RequestBody WasteDTO wasteDTO) {
+    public ResponseEntity<?> createNewWaste( @Valid @RequestBody WasteDTO wasteDTO) {
         boolean created  = wasteRepository.insertNewWaste(wasteDTO);
         if ( created ) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -135,7 +135,7 @@ public class WasteController {
      */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
-    ResponseEntity<?> updateWaste( @PathVariable Integer id, @Valid @RequestBody WasteDTO wasteDTO) {
+    public ResponseEntity<?> updateWaste( @PathVariable Integer id, @Valid @RequestBody WasteDTO wasteDTO) {
         Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
@@ -157,12 +157,13 @@ public class WasteController {
      */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @DeleteMapping( "/{id}" )
-    void deleteWasteById( @PathVariable Integer id ) {
+    public ResponseEntity<?> deleteWasteById( @PathVariable Integer id ) {
         Optional<WasteWithCategoryDTO> waste = wasteRepository.getWasteWithCategory( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
         }
         wasteRepository.deleteWasteById( id );
+        return ResponseEntity.status( HttpStatus.NO_CONTENT ).build();
     }
 
     /**
