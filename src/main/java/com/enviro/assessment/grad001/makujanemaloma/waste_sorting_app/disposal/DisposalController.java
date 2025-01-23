@@ -10,22 +10,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The DisposalController class provides endpoints for managing disposal records.
+ * It uses the DisposalRepository for performing CRUD operations on disposal data.
+ */
 @RestController
 @RequestMapping( "/api/disposals" )
 public class DisposalController {
     private final DisposalRepository disposalRepository;
     private final JdbcClient jdbcClient;
 
+    /**
+     * Constructs a DisposalController with the provided DisposalRepository and JdbcClient.
+     *
+     * @param disposalRepository The repository used for CRUD operations on disposal records.
+     * @param jdbcClient The JdbcClient instance used for executing SQL queries.
+     */
     public DisposalController( DisposalRepository disposalRepository, JdbcClient jdbcClient ) {
         this.disposalRepository = disposalRepository;
         this.jdbcClient = jdbcClient;
     }
 
+    /**
+     * Retrieves all disposal records.
+     *
+     * @return A list of DisposalDTO objects representing all disposals.
+     */
     @GetMapping( "" )
     List<DisposalDTO> getAllDisposals() {
         return disposalRepository.getAllDisposals();
     }
 
+    /**
+     * Retrieves a disposal record by its ID.
+     *
+     * @param id The ID of the disposal to retrieve.
+     * @return A ResponseEntity containing the DisposalDTO if found, or an error response if not found.
+     */
     @GetMapping( "/{id}" )
     ResponseEntity<?> getDisposal(@PathVariable Integer id ) {
         Optional<DisposalDTO> disposal = disposalRepository.getDisposal( id );
@@ -35,6 +56,12 @@ public class DisposalController {
         return ResponseEntity.ok( disposal.get() );
     }
 
+    /**
+     * Creates a new disposal record.
+     *
+     * @param disposalDTO The DisposalDTO object containing the details of the new disposal.
+     * @return A ResponseEntity indicating the success or failure of the operation.
+     */
     @ResponseStatus( HttpStatus.CREATED )
     @PostMapping( "" )
     ResponseEntity<?> createNewDisposal( @Valid @RequestBody DisposalDTO disposalDTO) {
@@ -47,6 +74,13 @@ public class DisposalController {
                 .body( "Failed to create new record" );
     }
 
+    /**
+     * Updates an existing disposal record.
+     *
+     * @param id The ID of the disposal to update.
+     * @param disposalDTO The DisposalDTO object containing the updated details.
+     * @return A ResponseEntity indicating the success or failure of the update operation.
+     */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @PutMapping( "/{id}" )
     ResponseEntity<?> updateDisposal( @PathVariable Integer id, @Valid @RequestBody DisposalDTO disposalDTO) {
@@ -64,6 +98,11 @@ public class DisposalController {
                 .body( "Failed to update record" );
     }
 
+    /**
+     * Deletes a disposal record by its ID.
+     *
+     * @param id The ID of the disposal to delete.
+     */
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @DeleteMapping( "/{id}" )
     void deleteDisposalById( @PathVariable Integer id ) {
