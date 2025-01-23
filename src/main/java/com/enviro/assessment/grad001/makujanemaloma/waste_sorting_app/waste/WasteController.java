@@ -172,7 +172,7 @@ public class WasteController {
      * @return A list of `WasteWithTipsDTO` objects representing waste with recycling tips.
      */
     @GetMapping( "/recycling-tips" )
-    List<WasteWithTipsDTO> getWasteWithRecyclingTips() {
+    public List<WasteWithTipsDTO> getWasteWithRecyclingTips() {
         return wasteRepository.getAllWasteWithTips();
     }
 
@@ -184,7 +184,7 @@ public class WasteController {
      * @throws WasteNotFoundException if no recycling tips are found for the given ID.
      */
     @GetMapping( "/{id}/recycling-tips" )
-    ResponseEntity<?> getWasteWithRecyclingTipsById( @PathVariable Integer id ) {
+    public ResponseEntity<?> getWasteWithRecyclingTipsById( @PathVariable Integer id ) {
         Optional<WasteWithTipsDTO> waste = wasteRepository.getWasteWithTipsByID( id );
         if ( waste.isEmpty() ) {
             throw new WasteNotFoundException( "Waste with id " + id + " not found" );
